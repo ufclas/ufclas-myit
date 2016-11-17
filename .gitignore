@@ -1,0 +1,7 @@
+.svn*
+_notes
+Thumbs.db
+.sass-cache
+*.orig
+.DS_Store
+defaults.php
