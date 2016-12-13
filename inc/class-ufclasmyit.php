@@ -33,6 +33,7 @@ class UFCLASMyIT extends GFAddOn {
 	public function init() {
 		parent::init();
 		add_filter( 'gform_entry_post_save', array( $this, 'post_to_api' ), 10, 2);
+		add_filter( 'gform_merge_tag_filter', array( $this, 'get_api_value' ), 10, 5);
 	}
 
 
@@ -50,11 +51,6 @@ class UFCLASMyIT extends GFAddOn {
 				'src'     => $this->get_base_url() . '/js/script.js',
 				'version' => $this->_version,
 				'deps'    => array( 'jquery' ),
-				'strings' => array(
-					'first'  => esc_html__( 'First Choice', 'ufclas-myit' ),
-					'second' => esc_html__( 'Second Choice', 'ufclas-myit' ),
-					'third'  => esc_html__( 'Third Choice', 'ufclas-myit' )
-				),
 				'enqueue' => array(
 					array(
 						'admin_page' => array( 'form_settings' ),
@@ -150,8 +146,8 @@ class UFCLASMyIT extends GFAddOn {
 			  if ( isset($response_body['data']) ) {
 				 $entry[$api_response_id] = sprintf("Ticket #%s has been submitted.", $response_body['data']['IncidentID']) ;
 			  } 
-			  elseif ( isset($response_body['message']) ) {
-				$entry[$api_response_id] = sprintf("Error: %s", $response_body['message']) ;
+			  elseif ( isset($response_body['error']) ) {
+				$entry[$api_response_id] = $response_body['error'];
 			  } 
 			  else {
 				$entry[$api_response_id] = sprintf("Error: %s", __('No ticket number received.', 'ufclas_myit') ) ;
@@ -166,16 +162,13 @@ class UFCLASMyIT extends GFAddOn {
 	/**
 	 * Collects ticket information from form submission and form settings
 	 *
-	 * @param array $form Form data
-	 * @todo Check source whether it should be 'Portal' instead of 'Phone'
-	 * @todo Check whether Gravity Forms sanitizes POST data
-	 * @todo Check valid request_hardware values
+	 * @param array $entry
+	 * @param array $form
+	 * @param array $settings
 	 * @return array New ticket information to submit to API
 	 * @since 1.0.0
 	 */
 	function get_ticket_data( $entry, $form, $settings ){
-		$specifics_data = array();
-		
 		$summary = $this->get_mapped_field_value( 'myit_summary', $form, $entry, $settings);
 		$gatorlink = $this->get_mapped_field_value( 'myit_gatorlink', $form, $entry, $settings);
 		$ufid = $this->get_mapped_field_value( 'myit_ufid', $form, $entry, $settings);
@@ -197,10 +190,8 @@ class UFCLASMyIT extends GFAddOn {
 			'GatorlinkID' => $gatorlink,
 		);
 		
-		foreach ( $settings['myit_specifics'] as $index => $specifics ){
-			$key = 'Specifics.' . $specifics['custom_key'];
-			$specifics_data[$key] = $entry[$specifics['value']];
-		}
+		// Add specifics data if exists
+		$specifics_data = $this->get_specifics_data( $entry, $form, $settings['myit_specifics'] );
 		
 		return array_merge( $ticket, $specifics_data );
 	}
@@ -416,7 +407,7 @@ class UFCLASMyIT extends GFAddOn {
 		
 		//loop through metaData and check the key name length (custom_key)
 		foreach ( $metaData as $meta ) {
-			if ( empty( $meta['custom_key'] ) && ! empty( $meta['value'] ) ) {
+			if ( empty( $meta['custom_key'] ) && !empty( $meta['value'] ) ) {
 				$this->set_field_error( array( 'name' => 'myit_specifics' ), esc_html__( "A field has been mapped to a custom key without a name. Please enter a name for the custom key, remove the metadata item, or return the corresponding drop down to 'Select a Field'.", 'ufclas-myit' ) );
 				break;
 			}
@@ -435,5 +426,56 @@ class UFCLASMyIT extends GFAddOn {
 	public function is_valid_setting( $value ) {
 		return strlen( $value ) > 0;
 	}
-
+	
+	/**
+	 * Formats merge tags for the API
+	 *
+	 * @param array $a Form list field values
+	 * @param int $cols Number of columns in list field
+	 * @return string Entry details for each list item
+	 * @since 1.0.1
+	 */
+	public function get_api_value( $value, $merge_tag, $modifier, $field, $raw_value ){
+		
+		// Format list field merge tags as text instead of html
+		if ( ($field->type == 'list') && ($merge_tag != 'all_fields') && ( $modifier != 'html' ) ){
+			
+			$value = $field->get_value_entry_detail( $raw_value, '', false, 'text' );
+	
+		}
+		return $value;	
+	}
+	
+	/**
+	 * Returns specifics data array for creating new tickets
+	 *
+	 * @param array $entry
+	 * @param array $form
+	 * @param array $settings
+	 * @return array Specifics
+	 * @since 1.0.1
+	 */
+	public function get_specifics_data( $entry, $form, $specifics ){
+		$specifics_data = array();
+		
+		if ( !empty( $specifics ) ){
+			
+			foreach ( $specifics as $s ){
+				// Get info from the specifics setting fields
+				$id = $s['value'];
+				$label = $s['custom_key'];
+				$value = $entry[$id];
+				
+				// Format any list fields as text instead of serialized array
+				$field = GFFormsModel::get_field( $form, $id );
+				if ( $field->type == 'list' ){
+					$value = $field->get_value_entry_detail( $value, '', false, 'text' );
+				}
+				
+				$specifics_data[$label] = $value;
+			}
+		}
+		
+		return $specifics_data;	
+	}
 }

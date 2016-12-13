@@ -21,4 +21,13 @@ Installation
 Changelog
 ---------
 
-- 1.0.0 - Initial commit using the Addon Framework, replaces defaults file.
+### 1.0.1
+
+- Fixes error message display to show Cherwell and API errors
+- Fixes errors if form doesn't have specifics data
+- No longer prepends 'Specifics.' to each specifics field name. Must be added manually in form settings.
+
+
+### 1.0.0
+
+- Initial commit using the Addon Framework, replaces defaults file.
