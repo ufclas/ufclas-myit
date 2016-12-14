@@ -169,7 +169,7 @@ class UFCLASMyIT extends GFAddOn {
 	 * @since 1.0.0
 	 */
 	function get_ticket_data( $entry, $form, $settings ){
-		$summary = $this->get_mapped_field_value( 'myit_summary', $form, $entry, $settings);
+		$summary = GFCommon::replace_variables( $settings['myit_summary'], $form, $entry, false, true, false );
 		$gatorlink = $this->get_mapped_field_value( 'myit_gatorlink', $form, $entry, $settings);
 		$ufid = $this->get_mapped_field_value( 'myit_ufid', $form, $entry, $settings);
 		$description = GFCommon::replace_variables( $settings['myit_description'], $form, $entry, false, true, false );
@@ -297,7 +297,7 @@ class UFCLASMyIT extends GFAddOn {
 						'feedback_callback' => array( $this, 'is_valid_setting' ),
 					),
 					array(
-						'label'             => esc_html__( 'Sub Category', 'ufclas-myit' ),
+						'label'             => esc_html__( 'Subcategory', 'ufclas-myit' ),
 						'type'              => 'text',
 						'name'              => 'myit_subcategory',
 						'tooltip'           => esc_html__( '', 'ufclas-myit' ),
@@ -333,9 +333,11 @@ class UFCLASMyIT extends GFAddOn {
 				'title'  => esc_html__( 'Form Fields', 'ufclas-myit' ),
 				'fields' => array(
 					array(
-						'label'               => esc_html__( 'Summary', 'ufclas-myit' ),
-						'name'                => 'myit_summary',
-						'type'                => 'field_select',
+						'label'             => esc_html__( 'Summary', 'ufclas-myit' ),
+						'type'              => 'text',
+						'name'              => 'myit_summary',
+						'class'             => 'medium merge-tag-support mt-position-right',
+						'feedback_callback' => array( $this, 'is_valid_setting' ),
 					),
 					array(
 						'label'               => esc_html__( 'Gatorlink Username', 'ufclas-myit' ),
