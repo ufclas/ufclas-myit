@@ -129,8 +129,8 @@ class UFCLASMyIT extends GFAddOn {
 				  array(
 					'method' => 'POST',
 					'body' => $ticketdata,
-					'redirection' => 15,
-					'timeout' => 120,
+					'redirection' => 45,
+					'timeout' => 90,
 					'httpversion' => '1.1',
 				  )
 			);
@@ -440,12 +440,21 @@ class UFCLASMyIT extends GFAddOn {
 	public function get_api_value( $value, $merge_tag, $modifier, $field, $raw_value ){
 		
 		// Format list field merge tags as text instead of html
-		if ( ($field->type == 'list') && ($merge_tag != 'all_fields') && ( $modifier != 'html' ) ){
+		if ( ($merge_tag != 'all_fields') && ( $modifier != 'html' ) ){
 			
-			$value = $field->get_value_entry_detail( $raw_value, '', false, 'text' );
-	
+			switch ($field->type){
+				case 'list':
+					$value = $field->get_value_entry_detail( $raw_value, '', false, 'text' );
+					break;
+				case 'textarea':
+					$value = $raw_value;
+					break;
+				case 'text':
+					$value = $raw_value;
+			}
 		}
-		return $value;	
+		
+		return $value;
 	}
 	
 	/**

@@ -25,12 +25,9 @@ In the site's dashboard menu, go to Forms > Settings. Click the 'MyIT' tab.
 
 ### Form Settings
 
-1. __Edit the form and add a hidden field for the API's response message.__  
-This field will contain either the new ticket number or the error message after the form has been submitted and will be saved in the entry. Example: 
-2. __Enable MyIT submissions for the form__. 
-Go to the form settings and select the MyIT tab. Check 'Enable MyIT'. This allows you to choose which forms will create new tickets.
-3. __Add the required ticket information__. 
-For the ticket summary and the description fields, use the merge tag dropdown menus on the right to use the submitted value of form fields.
+1. __Edit the form and add required fields (GatorLink username, UFID, and API response).__  The API Response field must be a hidden field and will contain either the new ticket number or the error message after the form has been submitted and will be saved in the entry. Example: 
+2. __Enable MyIT submissions for the form__. Go to the form settings and select the MyIT tab. Check 'Enable MyIT'. This allows you to choose which forms will create new tickets.
+3. __Add the required ticket information__. For the ticket summary and the description fields, use the merge tag dropdown menus on the right to use the submitted value of form fields.
 
 ### Form Confirmation Settings (optional)
 
@@ -55,6 +52,10 @@ __Example__: If a list's merge tag is ```{Accounts:33:}```, change it to ```{Acc
 
 Changelog
 ---------
+
+### 1.1.1
+
+- Fixes display of quotes and apostrophes in text and paragraph text fields
 
 ### 1.1
 
