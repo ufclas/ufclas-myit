@@ -147,9 +147,11 @@ class UFCLASMyIT extends GFAddOn {
 				 $entry[$api_response_id] = sprintf("Ticket #%s has been submitted.", $response_body['data']['IncidentID']) ;
 			  } 
 			  elseif ( isset($response_body['error']) ) {
+				if (WP_DEBUG) { error_log( print_r( $response, true ) ); }
 				$entry[$api_response_id] = $response_body['error'];
 			  } 
 			  else {
+				if (WP_DEBUG) { error_log( print_r( $response, true ) ); }
 				$entry[$api_response_id] = sprintf("Error: %s", __('No ticket number received.', 'ufclas_myit') ) ;
 			  }
 			  
