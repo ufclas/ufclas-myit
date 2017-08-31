@@ -53,6 +53,12 @@ __Example__: If a list's merge tag is ```{Accounts:33:}```, change it to ```{Acc
 Changelog
 ---------
 
+### 1.1.2
+
+- Fixes display of line breaks in the ticket message after upgrade
+- Fixes display of quotes and apostrophes in select fields
+- Logs request and response to the error log if WP_DEBUG is true
+
 ### 1.1.1
 
 - Fixes display of quotes and apostrophes in text and paragraph text fields
@@ -60,6 +66,7 @@ Changelog
 ### 1.1
 
 - Adds support for merge tags in the ticket summary field
+
 
 ### 1.0.1
 
