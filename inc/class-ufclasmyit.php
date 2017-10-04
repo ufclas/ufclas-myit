@@ -147,11 +147,17 @@ class UFCLASMyIT extends GFAddOn {
 				 $entry[$api_response_id] = sprintf("Ticket #%s has been submitted.", $response_body['data']['IncidentID']) ;
 			  } 
 			  elseif ( isset($response_body['error']) ) {
-				if (WP_DEBUG) { error_log( print_r( $response, true ) ); }
+				if (WP_DEBUG) { 
+					error_log( "Request: " . print_r($ticketdata, true) );  
+					error_log( "Response: " . print_r($response['http_response'], true) ); 
+				}
 				$entry[$api_response_id] = $response_body['error'];
 			  } 
 			  else {
-				if (WP_DEBUG) { error_log( print_r( $response, true ) ); }
+				if (WP_DEBUG) { 
+					error_log( "Request: " . print_r($ticketdata, true) );  
+					error_log( "Response: " . print_r($response['http_response'], true) ); 
+				}
 				$entry[$api_response_id] = sprintf("Error: %s", __('No ticket number received.', 'ufclas_myit') ) ;
 			  }
 			  
@@ -175,6 +181,7 @@ class UFCLASMyIT extends GFAddOn {
 		$gatorlink = $this->get_mapped_field_value( 'myit_gatorlink', $form, $entry, $settings);
 		$ufid = $this->get_mapped_field_value( 'myit_ufid', $form, $entry, $settings);
 		$description = GFCommon::replace_variables( $settings['myit_description'], $form, $entry, false, true, false );
+		$description = nl2br($description);
 		
 		$ticket = array(
 			'Portfolio' => $settings['myit_portfolio'], 
@@ -452,6 +459,8 @@ class UFCLASMyIT extends GFAddOn {
 					$value = $raw_value;
 					break;
 				case 'text':
+					$value = $raw_value;
+				case 'select':
 					$value = $raw_value;
 			}
 		}
