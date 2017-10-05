@@ -131,7 +131,7 @@ class UFCLASMyIT extends GFAddOn {
 					'body' => $ticketdata,
 					'redirection' => 45,
 					'timeout' => 90,
-					'httpversion' => '1.1',
+					'sslverify' => false
 				  )
 			);
 			
