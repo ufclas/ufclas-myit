@@ -10,25 +10,28 @@ License: GPL2
 Build Date: 20170831
 */
 
-define( 'UFCLAS_MYIT_VERSION', '1.1.2' );
+define('UFCLAS_MYIT_VERSION', '1.1.2');
 
-add_action( 'gform_loaded', array( 'UFCLAS_MyIT_Bootstrap', 'load' ), 5 );
+add_action('gform_loaded', array( 'UFCLAS_MyIT_Bootstrap', 'load' ), 5);
 
-class UFCLAS_MyIT_Bootstrap {
+class UFCLAS_MyIT_Bootstrap
+{
 
-    public static function load() {
+    public static function load()
+    {
 
-        if ( ! method_exists( 'GFForms', 'include_addon_framework' ) ) {
+        if (! method_exists('GFForms', 'include_addon_framework') ) {
             return;
         }
 
-        require_once( 'inc/class-ufclasmyit.php' );
+        include_once 'inc/class-ufclasmyit.php';
 
-        GFAddOn::register( 'UFCLASMyIT' );
+        GFAddOn::register('UFCLASMyIT');
     }
 
 }
 
-function UFCLAS_MyIT() {
+function UFCLAS_MyIT()
+{
     return UFCLASMyIT::get_instance();
 }
